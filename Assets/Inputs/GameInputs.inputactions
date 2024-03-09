@@ -1,0 +1,82 @@
+{
+    "name": "GameInputs",
+    "maps": [
+        {
+            "name": "Game",
+            "id": "f39280a6-0a8e-4e71-8e83-58a42c6caa33",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "ce87faf6-78cc-484d-b231-b717f6a4a56e",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "95efe6e1-4f4d-425e-981e-91655f30fefb",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Keyboard",
+            "id": "d7f405a6-30f4-4e52-9887-7d441eb1e4a6",
+            "actions": [
+                {
+                    "name": "Up",
+                    "type": "Button",
+                    "id": "a85fdd47-c0ac-4dfb-80d5-4ebebfb7c866",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Down",
+                    "type": "Button",
+                    "id": "a832909e-2076-411d-833e-60e971a25b94",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "7d6e9028-9474-4b38-9b1e-4825e406d404",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Up",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "10a0db54-caab-4387-ab36-058af0f1e0ad",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Down",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
