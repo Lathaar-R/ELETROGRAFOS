@@ -12,11 +12,21 @@ public class CallBackManeger : MonoBehaviour
     // Public
     
     // Callbacks
+    public Action onStartLevel;
+    public Action onEndLevel;
+    public Action onStartLevelAnimation;
+    public Action onEndLevelAnimation;
+
     public Action onUpdateGraph;
-    public Action SelectVertice;
-    public Action SelectEdge;
-    public Action MoveVertice;
-    public Action VerificarGrafo;
+    public Action selectVertice;
+    public Action selectEdge;
+    public Action moveVertice;
+    public Action weightEdge;
+    public Action<bool> verificarGrafo;
+    public Action grafoCorreto;
+    public Action grafoIncorreto;
+    public Action<bool> mudarDirigido;
+    public Action onStartMenu;
     #endregion
 
     private void Awake()
@@ -34,21 +44,36 @@ public class CallBackManeger : MonoBehaviour
 
     public void SelectVerticeButton()
     {
-        SelectVertice?.Invoke();
+        selectVertice?.Invoke();
     }
 
     public void SelectEdgeButton()
     {
-        SelectEdge?.Invoke();
+        selectEdge?.Invoke();
     }
 
     public void MoveVerticeButton()
     {
-        MoveVertice?.Invoke();
+        moveVertice?.Invoke();
     }
 
-    public void VerificarGrafoButton()
+    public void WeightEdgeButton()
     {
-        VerificarGrafo?.Invoke();
+        weightEdge?.Invoke();
+    }
+
+    public void VerificarGrafoButton(bool correct)
+    {
+        verificarGrafo?.Invoke(correct);
+    }
+
+    public void MudarDirigidoButton(bool directed)
+    {
+        mudarDirigido?.Invoke(directed);
+    }
+
+    public void OnStartLevel()
+    {
+        onStartLevel?.Invoke();
     }
 }

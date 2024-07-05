@@ -26,8 +26,6 @@ public class MouseScript : MonoBehaviour
     // Private
     private Vertice vVertice;
     private Vertice wVertice;
-    private Edge curEdge;
-    private LineRenderer curEdgeLine;
 
     // placeholder variables
     public GameObject verticePrefab;
@@ -49,17 +47,19 @@ public class MouseScript : MonoBehaviour
     private void OnEnable()
     {
         // InputManeger.Instance.GameInputs.Keyboard.W.performed += OnWPressed;
-        CallBackManeger.Instance.SelectVertice += OnVerticeSelect;
-        CallBackManeger.Instance.SelectEdge += OnEdgeSelect;
-        CallBackManeger.Instance.MoveVertice += OnMoveVertice;
+        CallBackManeger.Instance.selectVertice += OnVerticeSelect;
+        CallBackManeger.Instance.selectEdge += OnEdgeSelect;
+        CallBackManeger.Instance.moveVertice += OnMoveVertice;
+        CallBackManeger.Instance.weightEdge += OnWeightSelected;
     }
 
     private void OnDisable()
     {
         // InputManeger.Instance.GameInputs.Keyboard.W.performed -= OnWPressed;
-        CallBackManeger.Instance.SelectVertice -= OnVerticeSelect;
-        CallBackManeger.Instance.SelectEdge -= OnEdgeSelect;
-        CallBackManeger.Instance.MoveVertice -= OnMoveVertice;
+        CallBackManeger.Instance.selectVertice -= OnVerticeSelect;
+        CallBackManeger.Instance.selectEdge -= OnEdgeSelect;
+        CallBackManeger.Instance.moveVertice -= OnMoveVertice;
+        CallBackManeger.Instance.weightEdge -= OnWeightSelected;
     }
 
     void Start()
@@ -91,8 +91,6 @@ public class MouseScript : MonoBehaviour
         vVertice?.Deselect();
         vVertice = null;
         wVertice = null;
-        curEdge = null;
-        curEdgeLine = null;
     }
 
     public void GamePlayState()
@@ -117,13 +115,13 @@ public class MouseScript : MonoBehaviour
                 }
                 else
                 {
-                    // Instantiate Vertice
-                    var component = Instantiate(verticePrefab, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
-                    var vertice = component.GetComponent<Vertice>(); ;
-                    component.transform.position = hit.transform.position;
+                    // // Instantiate Vertice
+                    // var component = Instantiate(verticePrefab, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
+                    // var vertice = component.GetComponent<Vertice>(); ;
+                    // component.transform.position = hit.transform.position;
 
                     // Add Vertice to Graph
-                    _board.AddVertice(vertice, boardId);
+                    _board.AddVertice(hit.transform.position, boardId);
 
 
                     //Debug.Log("Hit " + hit.name + " at " + component.transform.position);
@@ -230,29 +228,22 @@ public class MouseScript : MonoBehaviour
                         {
                             if(_board.Edges.Where(e => (e.V.Id == vVertice.Id && e.W.Id == wVertice.Id) || (e.V.Id == wVertice.Id && e.W.Id == vVertice.Id)).Count() > 1)
                             {
-                                Debug.Log("Error: More tahn two edges between the same vertices are not allowed");
+                                Debug.Log("Error: More than two edges between the same vertices are not allowed");
                                 vVertice.Deselect();
                                 vVertice = null;
                                 wVertice = null;
                                 return;
                             }
-                            Debug.Log("Vertice " + wVertice.Id + " selected" + " BoardId: " + wVertice.BoardId);
+                            //Debug.Log("Vertice " + wVertice.Id + " selected" + " BoardId: " + wVertice.BoardId);
                             Vector2 pos = vVertice.transform.position;
 
-                            curEdge = Instantiate(edgePrefab, Vector3.zero, Quaternion.identity).GetComponent<Edge>();
-                            curEdge.V = vVertice;
-                            curEdge.W = wVertice;
-                            curEdgeLine = curEdge.GetComponentInChildren<LineRenderer>();
+
+                            _board.AddEdge(vVertice, wVertice);
 
 
-                            _board.AddEdge(curEdge, vVertice.Id, wVertice.Id);
-
-
-                            curEdge = null;
                             vVertice.Deselect();
                             vVertice = null;
                             wVertice = null;
-                            curEdgeLine = null;
                         }
                         else
                         {
@@ -262,11 +253,9 @@ public class MouseScript : MonoBehaviour
                 }
                 else
                 {
-                    Destroy(curEdge.gameObject);
-                    curEdge = null;
+                    //Destroy(curEdge.gameObject);
                     vVertice.Deselect();
                     vVertice = null;
-                    curEdgeLine = null;
                 }
             }
             else
@@ -284,7 +273,7 @@ public class MouseScript : MonoBehaviour
                         vVertice = _board.Vertices.Find(v => v.BoardId == boardId);
                         if (vVertice != null)
                         {
-                            Debug.Log("Vertice " + vVertice.Id + " selected" + " BoardId: " + vVertice.BoardId);
+                            //Debug.Log("Vertice " + vVertice.Id + " selected" + " BoardId: " + vVertice.BoardId);
                             vVertice.Select();
                         }
                         else
@@ -314,22 +303,48 @@ public class MouseScript : MonoBehaviour
         } 
     }
 
+    private void WeightFunction()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            var hit = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition), LayerMask.GetMask("Wire"));
+
+            if (hit != null)
+            {
+                Debug.Log("Hit " + hit.name);
+                if (hit.TryGetComponent<Edge>(out var edge))
+                {
+                    edge.Weight = Math.Clamp(edge.Weight + 1, 0, 9);
+                    _board.UpdateGraph();
+                }
+                else
+                {
+                    Debug.Log("Error: Edge not found");
+                }
+            }
+        }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            var hit = Physics2D.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition), LayerMask.GetMask("Wire"));
+
+            if (hit != null)
+            {
+                if (hit.TryGetComponent<Edge>(out var edge))
+                {
+                    edge.Weight = Math.Clamp(edge.Weight - 1, 0, 9);
+                    _board.UpdateGraph();
+                }
+                else
+                {
+                    Debug.Log("Error: Edge not found");
+                }
+            }
+        }
+    }
+
     #endregion
 
     #region Input Callbacks
-    private void OnWPressed(InputAction.CallbackContext context)
-    {
-        if (_selectedElementFunction == VerticeFunction)
-        {
-            ChangeSelectedElementFunction(EdgeFunction);
-            funcImage.color = Color.red;
-        }
-        else
-        {
-            ChangeSelectedElementFunction(VerticeFunction);
-            funcImage.color = Color.green;
-        }
-    }
 
     private void OnVerticeSelect()
     {
@@ -352,6 +367,14 @@ public class MouseScript : MonoBehaviour
         if (_selectedElementFunction != MoveVerticeFunction)
         {
             ChangeSelectedElementFunction(MoveVerticeFunction);
+        }
+    }
+
+    private void OnWeightSelected()
+    {
+        if (_selectedElementFunction != WeightFunction)
+        {
+            ChangeSelectedElementFunction(WeightFunction);
         }
     }
     #endregion

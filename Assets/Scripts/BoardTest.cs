@@ -27,50 +27,6 @@ public class BoardTest : MonoBehaviour
 
     }
 
-    public void PressEnterV()
-    {
-        if (int.TryParse(inputFieldV.text, out int id))
-        {
-            var vertice = Instantiate(verticePrefab, Vector3.zero, Quaternion.identity);
-            board.AddVertice(vertice.GetComponent<Vertice>(), id);
-        }
-    }
-
-    public void PressEnterRV()
-    {
-        if (int.TryParse(inputFieldV.text, out int id))
-        {
-            board.RemoveVertice(id);
-        }
-    }
-
-    public void PressEnterE()
-    {
-        int v, w;
-        var input = inputFieldE.text.Split(' ');
-
-        v = int.TryParse(input[0], out v) ? v : -1;
-        w = int.TryParse(input[1], out w) ? w : -1;
-
-        if (v != -1 && w != -1)
-        {
-            var edge = Instantiate(edgePrefab, Vector3.zero, Quaternion.identity);
-            board.AddEdge(edge.GetComponent<Edge>(), v, w);
-        }
-    }
-
-    public void PressEnterRE()
-    {
-        int v, w;
-        v = int.TryParse(inputFieldE.text.Split(' ')[0], out v) ? v : -1;
-        w = int.TryParse(inputFieldE.text.Split(' ')[1], out w) ? w : -1;
-
-        if (v != -1 && w != -1)
-        {
-            board.RemoveEdge(board.Edges.Find(e => e.V.Id == v && e.W.Id == w));
-        }
-    }
-
     private void OnUpdateGraph()
     {
 
