@@ -34,46 +34,38 @@ public class VerificadorScript : MonoBehaviour
         bool result = true;
 
         result = result && TipoDoGrafo(GameManagerScript.Instance.CurrentPedido);
-        Debug.Log(result);
 
         result = result && (GameManagerScript.Instance.CurrentPedido.vNum == _board.Vertices.Count);
-        Debug.Log(result);
 
         result = result && (GameManagerScript.Instance.CurrentPedido.eNum == _board.Edges.Count);
-        Debug.Log(result);
 
         foreach (var d in GameManagerScript.Instance.CurrentPedido.vDegrees)
         {
             result = result && _board.Vertices.Any(v => VerificarGrau(v, d));
-            Debug.Log(result);
+
         }
 
         foreach (var d in GameManagerScript.Instance.CurrentPedido.vDegreesIn)
         {
             result = result && _board.Vertices.Any(v => VerificarGrau(v, d, true));
-            Debug.Log(result);
+
         }
 
         foreach (var d in GameManagerScript.Instance.CurrentPedido.vDegreesOut)
         {
             result = result && _board.Vertices.Any(v => VerificarGrau(v, d, false));
-            Debug.Log(result);
+
         }
 
         result = result && (GameManagerScript.Instance.CurrentPedido.isDirected == _board.Graph.IsDirected);
-        Debug.Log(result);
 
         result = GameManagerScript.Instance.CurrentPedido.isRegular ? VerificarGrafoRegular() : result;
-        Debug.Log(result);
 
         result = GameManagerScript.Instance.CurrentPedido.isComplete ? VerificarGrafoCompleto() : result;
-        Debug.Log(result);
 
         result = GameManagerScript.Instance.CurrentPedido.isBipartite ? VerificarBiPartido() : result;
-        Debug.Log(result);
 
         result = GameManagerScript.Instance.CurrentPedido.compConex.Length > 0 ? VerificarCompConex() : result;
-        Debug.Log(result);
 
         return result;
     }
